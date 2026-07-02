@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>統計力学１ 復習問題５ 穴埋めクイズ</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
+<style>
+  :root{
+    --bg:#0d1117;
+    --bg-panel:#12181f;
+    --bg-card:#161b22;
+    --bg-card-2:#1c232c;
+    --border:#2a3038;
+    --border-soft:#232a33;
+    --text:#c9d1d9;
+    --text-dim:#8b949e;
+    --text-faint:#5b6470;
+    --accent:#58a6ff;
+    --accent-soft:#1f3a5c;
+    --amber:#e3b341;
+    --amber-soft:#3a2f14;
+    --green:#3fb950;
+    --green-soft:#0f2b16;
+    --red:#f85149;
+    --red-soft:#3a1414;
+    --purple:#bc8cff;
+    --radius:10px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(88,166,255,0.08), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(188,140,255,0.06), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', sans-serif;
+    line-height:1.85;
+    padding-bottom:80px;
+  }
+
+  header.page-head{
+    max-width:980px;
+    margin:0 auto;
+    padding:44px 24px 20px;
+    text-align:center;
+  }
+  header.page-head .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:.18em;
+    font-size:12px;
+    color:var(--accent);
+    text-transform:uppercase;
+  }
+  header.page-head h1{
+    font-family:'Noto Serif JP', serif;
+    font-weight:700;
+    font-size:clamp(24px,4vw,34px);
+    margin:10px 0 8px;
+    color:#f0f4f9;
+  }
+  header.page-head p{
+    color:var(--text-dim);
+    font-size:14.5px;
+    max-width:640px;
+    margin:0 auto;
+  }
+
+  .tabs{
+    max-width:980px;
+    margin:24px auto 0;
+    padding:0 24px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:linear-gradient(var(--bg) 78%, transparent);
+    padding-top:10px;
+    padding-bottom:14px;
+  }
+  .tab-btn{
+    font-family:'Noto Sans JP', sans-serif;
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--text-dim);
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:9px 16px;
+    cursor:pointer;
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .tab-btn:hover{ color:var(--text); border-color:#3a424d; }
+  .tab-btn.active{
+    color:#04101f;
+    background:var(--accent);
+    border-color:var(--accent);
+    font-weight:700;
+  }
+
+  main{ max-width:980px; margin:0 auto; padding:0 24px; }
+
+  .tab-panel{ display:none; animation:fadein .25s ease; }
+  .tab-panel.active{ display:block; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .tab-intro{
+    border-left:3px solid var(--accent);
+    background:var(--bg-panel);
+    padding:16px 18px;
+    border-radius:6px;
+    margin:8px 0 26px;
+    font-size:14.5px;
+    color:var(--text-dim);
+  }
+  .tab-intro b{ color:var(--text); }
+
+  .section-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:.14em;
+    color:var(--purple);
+    text-transform:uppercase;
+    margin:36px 0 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--border);
+  }
+
+  /* ---- Quiz question card ---- */
+  .question{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px 22px 18px;
+    margin-bottom:20px;
+  }
+  .q-prompt{
+    font-size:15px;
+    color:#e6edf3;
+    margin-bottom:16px;
+  }
+  .q-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--accent);
+    background:var(--accent-soft);
+    border-radius:5px;
+    padding:2px 8px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .blank-marker{
+    display:inline-block;
+    color:var(--amber);
+    font-weight:700;
+    background:var(--amber-soft);
+    border-radius:5px;
+    padding:0 6px;
+    margin:0 1px;
+  }
+
+  .blanks-wrap{ display:flex; flex-direction:column; gap:14px; }
+  .blank-block{ }
+  .blank-label{
+    font-size:12.5px;
+    color:var(--text-faint);
+    margin-bottom:8px;
+    font-weight:500;
+  }
+  .blank-label .amber{ color:var(--amber); font-weight:700; }
+
+  .options{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
+    gap:8px;
+  }
+  .opt-btn{
+    font-family:'Noto Sans JP', sans-serif;
+    font-size:13.5px;
+    color:var(--text);
+    background:var(--bg-card-2);
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:10px 12px;
+    text-align:left;
+    cursor:pointer;
+    transition:all .12s ease;
+    position:relative;
+  }
+  .opt-btn:hover:not(.disabled){
+    border-color:var(--accent);
+    background:#1b2a3d;
+  }
+  .opt-btn.disabled{ cursor:default; }
+  .opt-btn.correct{
+    border-color:var(--green);
+    background:var(--green-soft);
+    color:#8ee69f;
+  }
+  .opt-btn.correct::after{ content:" ✓"; }
+  .opt-btn.incorrect{
+    border-color:var(--red);
+    background:var(--red-soft);
+    color:#ffb1ab;
+  }
+  .opt-btn.incorrect::after{ content:" ✗"; }
+
+  .q-footer{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:16px;
+  }
+  .answer-btn{
+    font-family:'Noto Sans JP', sans-serif;
+    font-size:13px;
+    font-weight:700;
+    color:#04101f;
+    background:var(--amber);
+    border:none;
+    border-radius:7px;
+    padding:8px 16px;
+    cursor:pointer;
+  }
+  .answer-btn:hover{ filter:brightness(1.08); }
+  .feedback-msg{ font-size:12.5px; color:var(--text-faint); }
+
+  .explanation{
+    margin-top:14px;
+    padding:14px 16px;
+    background:#0f1520;
+    border:1px dashed var(--border-soft);
+    border-radius:8px;
+    font-size:13.5px;
+    color:var(--text-dim);
+  }
+  .explanation.hidden{ display:none; }
+  .explanation .ans-line{
+    color:var(--green);
+    font-weight:700;
+    margin-bottom:6px;
+  }
+
+  /* ---- Beginner step-by-step explanation ---- */
+  .lesson{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:26px 26px 22px;
+    margin:12px 0 40px;
+  }
+  .lesson h3{
+    font-family:'Noto Serif JP', serif;
+    color:#f0f4f9;
+    font-size:19px;
+    margin:0 0 6px;
+  }
+  .lesson h4{
+    font-family:'Noto Serif JP', serif;
+    color:var(--accent);
+    font-size:15.5px;
+    margin:26px 0 8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .lesson h4 .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px; height:22px;
+    border-radius:50%;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+  }
+  .lesson p{ font-size:14.5px; color:var(--text); margin:8px 0; }
+  .lesson p.dim{ color:var(--text-dim); }
+
+  .formula-block{
+    background:#0a0f16;
+    border:1px solid var(--border-soft);
+    border-left:3px solid var(--purple);
+    border-radius:6px;
+    padding:16px 18px;
+    margin:12px 0;
+    overflow-x:auto;
+  }
+  .formula-block .caption{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--purple);
+    letter-spacing:.06em;
+    margin-bottom:6px;
+    text-transform:uppercase;
+  }
+
+  .point-box{
+    background:var(--accent-soft);
+    border:1px solid #2c4a6e;
+    border-radius:8px;
+    padding:14px 16px;
+    margin:14px 0;
+    font-size:13.8px;
+  }
+  .point-box .head{
+    font-weight:700;
+    color:#9ec9ff;
+    margin-bottom:5px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .warn-box{
+    background:var(--red-soft);
+    border:1px solid #5c2323;
+    border-radius:8px;
+    padding:14px 16px;
+    margin:14px 0;
+    font-size:13.8px;
+  }
+  .warn-box .head{
+    font-weight:700;
+    color:#ff9b94;
+    margin-bottom:5px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .key-points{
+    margin-top:24px;
+    background:linear-gradient(180deg, rgba(63,185,80,0.08), rgba(63,185,80,0.02));
+    border:1px solid #23422a;
+    border-radius:8px;
+    padding:16px 18px 12px;
+  }
+  .key-points .head{
+    font-weight:700;
+    color:#8ee69f;
+    font-size:14px;
+    margin-bottom:10px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .key-points ul{ margin:0; padding-left:20px; }
+  .key-points li{ font-size:13.8px; margin-bottom:8px; color:var(--text); }
+  .key-points li b{ color:#c9f5d0; }
+
+  footer.page-foot{
+    max-width:980px;
+    margin:30px auto 0;
+    padding:20px 24px;
+    text-align:center;
+    color:var(--text-faint);
+    font-size:12px;
+  }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <div class="eyebrow">Statistical Mechanics I &mdash; Review Set 5</div>
+  <h1>統計力学１ 復習問題５ 穴埋めクイズ</h1>
+  <p>熱力学第一法則・自由エネルギー・エントロピー・クラウジウスの不等式まで。各タブの設問に答えたら「答えを見る」で解説を確認し、最後のステップ解説でじっくり理解を固めよう。</p>
+</header>
+
+<nav class="tabs" id="tabNav"></nav>
+
+<main id="mainArea"></main>
+
+<footer class="page-foot">統計力学１ 復習問題５（更新日：June 2, 2026）をもとに作成</footer>
+
+<script>
+/* ============================================================
+   QUIZ DATA
+   ============================================================ */
+const TABS = [
+{
+  id:'t1',
+  title:'① 第一法則',
+  intro:'熱力学第一法則は「エネルギー保存則」を熱と仕事の言葉で書き直したものです。まずは符号の約束（系が吸収する熱・系がされた仕事をどちらも正にとる）を確認しましょう。',
+  questions:[
+    {
+      prompt:'ある過程で系が吸収する熱を <b>Q</b>，系が<u>された</u>仕事を <b>W</b> とする。この過程における系の内部エネルギーの変化は<br>ΔE = <span class="blank-marker">（ア）</span><br>と表される。',
+      blanks:[
+        { label:'ア', correct:'Q + W', distractors:['Q − W','Q','W'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔE = Q + W</div>系が吸収する熱と系がされた仕事は、どちらも系にエネルギーを与えるので、単純に足し合わせます。これが熱力学第一法則です。'
+    },
+    {
+      prompt:'系が外部にした仕事を W′ とする（W は系が外部から<u>された</u>仕事）。このとき，W と W′ の関係は<br>W = <span class="blank-marker">（イ）</span><br>である。',
+      blanks:[
+        { label:'イ', correct:'−W′', distractors:['W′','0','W′ + Q'] }
+      ],
+      explanation:'<div class="ans-line">正解：W = −W′</div>「された仕事」と「した仕事」は同じ量を逆向きに測ったものなので、符号が反転します。教科書・問題集によって仕事の符号の取り方が違うので、必ずどちらの約束か確認する癖をつけましょう。'
+    }
+  ]
+},
+{
+  id:'t2',
+  title:'② 自由エネルギーとエントロピー',
+  intro:'等温準静的過程では、①系にされる仕事＝自由エネルギー変化、②吸収熱÷温度＝エントロピー変化、という2つの重要な関係が成り立ちます。この2つを組み合わせる計算過程も出題します。',
+  questions:[
+    {
+      prompt:'等温準静的過程で系が吸収する熱を Q，系がされた仕事を W とする。この過程での系のヘルムホルツ自由エネルギーの変化は<br>ΔF = <span class="blank-marker">（ア）</span><br>である。',
+      blanks:[
+        { label:'ア', correct:'W', distractors:['Q','Q + W','Q − W'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔF = W</div>等温準静的過程では「系になされる仕事」がそのまま自由エネルギーの増加分になります。これは自由エネルギーが「有効に取り出せる仕事」を表す量だからです。'
+    },
+    {
+      prompt:'同じ温度 T の等温準静的過程で，系のエントロピーの変化は<br>ΔS = <span class="blank-marker">（イ）</span><br>である。',
+      blanks:[
+        { label:'イ', correct:'Q / T', distractors:['Q','QT','W / T'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔS = Q / T</div>準静的過程では、系と熱浴が常に熱平衡にあるとみなせるため、吸収した熱をそのときの温度で割った量がエントロピー変化になります。'
+    },
+    {
+      prompt:'ΔF と ΔE，ΔS の間には，定義から ΔF = ΔE − TΔS という関係がある。ここで ΔE = Q + W，ΔS = Q/T を代入すると<br>ΔF = (Q + W) − T ×（<span class="blank-marker">ウ</span>）<br>と書ける（（ウ）に入るのは ΔS の中身）。',
+      blanks:[
+        { label:'ウ', correct:'Q / T', distractors:['Q','W / T','QT'] }
+      ],
+      explanation:'<div class="ans-line">正解：Q / T</div>ΔS = Q/T なので，そのまま代入するだけです。次の設問で T をかけて整理します。'
+    },
+    {
+      prompt:'上の式で T × (Q/T) = Q なので<br>ΔF = Q + W − Q = <span class="blank-marker">（エ）</span><br>となる。',
+      blanks:[
+        { label:'エ', correct:'W', distractors:['Q','0','Q + W'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔF = W</div>Q が打ち消し合って、最初の設問と同じ結論 ΔF = W に戻ります。これは ΔF=W と ΔS=Q/T が独立な事実ではなく、第一法則 ΔE=Q+W と定義 F=E−TS から導かれる整合的な結果であることを確認する計算です。'
+    }
+  ]
+},
+{
+  id:'t3',
+  title:'③ 断熱過程と自発変化',
+  intro:'熱力学第二法則は「孤立系のエントロピーは減らない」という形で最もよく使われます。断熱過程・定積等温接触という2つの典型的な設定で、この原理がどう姿を変えるかを見ます。',
+  questions:[
+    {
+      prompt:'断熱過程（準静的とは限らない）で外部と熱のやり取りが一切ないとき，到達可能な終状態は，始状態に対して<br>エントロピー変化が <span class="blank-marker">（ア）</span><br>を満たす状態である。',
+      blanks:[
+        { label:'ア', correct:'ΔS ≥ 0', distractors:['ΔS ≤ 0','ΔS = 0','ΔF ≥ 0'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔS ≥ 0</div>準静的な断熱過程ならエントロピー一定（ΔS=0）ですが，一般の（不可逆な）断熱過程ではエントロピーは増加しうるので，まとめて ΔS ≥ 0 と書けます。'
+    },
+    {
+      prompt:'系を温度 T の熱浴に接触させ，体積を一定に保ち，外部から仕事を加えずに自発的に進む過程で，到達可能な終状態は，始状態に対して<br>自由エネルギー変化が <span class="blank-marker">（イ）</span><br>を満たす状態である。',
+      blanks:[
+        { label:'イ', correct:'ΔF ≤ 0', distractors:['ΔF ≥ 0','ΔS ≤ 0','ΔS ≥ 0'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔF ≤ 0</div>定温・定積・仕事なしという条件のもとでは，自由エネルギーが「行き着く先を決める力学的ポテンシャル」の役割をし，自発変化は必ず F が下がる方向に進みます。'
+    },
+    {
+      prompt:'この結果はもともと，系と熱浴を合わせた全体を孤立系とみなしたときの<br>全エントロピー変化 ΔS<sub>tot</sub> が <span class="blank-marker">（ウ）</span><br>という熱力学第二法則の要請から導かれる。',
+      blanks:[
+        { label:'ウ', correct:'ΔS<sub>tot</sub> ≥ 0', distractors:['ΔS<sub>tot</sub> ≤ 0','ΔS<sub>tot</sub> = 0','ΔS<sub>sys</sub> ≥ 0'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔS<sub>tot</sub> ≥ 0</div>断熱過程の ΔS≥0 も，定温定積の ΔF≤0 も，根っこは同じ「孤立系の全エントロピーは減らない」という第二法則の言い換えにすぎません。'
+    }
+  ]
+},
+{
+  id:'t4',
+  title:'④ 等温過程の仕事と熱',
+  intro:'同じ始状態・終状態を結ぶ等温過程でも，準静的に行うか一気に行うかで，仕事と熱の量は変わります。ここでは不等式 W ≥ ΔF を出発点に，最小・最大がどちらに現れるかを段階的に確認します。',
+  questions:[
+    {
+      prompt:'同じ始状態と終状態を結ぶ等温過程では，系になされる仕事 W と自由エネルギー変化 ΔF の間に<br>W ≥ <span class="blank-marker">（ア）</span><br>という不等式が成り立つ。',
+      blanks:[
+        { label:'ア', correct:'ΔF', distractors:['ΔE','Q','TΔS'] }
+      ],
+      explanation:'<div class="ans-line">正解：W ≥ ΔF</div>ΔF は状態だけで決まる量（状態量）ですが，W は途中の経路によって変わる量です。W はいつも ΔF 以上になり，効率よく縮められる過程ほど W は小さくなります。'
+    },
+    {
+      prompt:'この不等式で等号が成り立つのは <span class="blank-marker">（イ）</span> 過程のときであり，そのとき W は <span class="blank-marker">（ウ）</span> になる。',
+      blanks:[
+        { label:'イ', correct:'等温準静的', distractors:['断熱','不可逆','等圧'] },
+        { label:'ウ', correct:'最小', distractors:['最大','0','一定'] }
+      ],
+      explanation:'<div class="ans-line">正解：等温準静的過程で最小</div>準静的過程は「限りなくゆっくり，可逆に近い形で」進む過程なので，むだなエネルギー散逸が最も少なく，必要な仕事が最小になります。'
+    },
+    {
+      prompt:'第一法則 ΔE = Q + W より Q = ΔE − W と書ける。始状態・終状態が同じなので ΔE は経路によらず一定である。W が最小になる等温準静的過程のとき，Q = ΔE − W は <span class="blank-marker">（エ）</span> になる。',
+      blanks:[
+        { label:'エ', correct:'最大', distractors:['最小','0','一定'] }
+      ],
+      explanation:'<div class="ans-line">正解：最大</div>ΔE は固定された値なので，引き算する W が最小であればあるほど，残りの Q は最大になります。「仕事が節約できる分，熱をたくさん吸収できる」というイメージです。'
+    }
+  ]
+},
+{
+  id:'t5',
+  title:'⑤ 熱力学関数の全微分',
+  intro:'内部エネルギー E(S,V) の基本関係式 dE = TdS − pdV は，熱力学のすべての関係式の出発点です。ここから F = E − TS を経由して dF を導く計算過程を出題します。',
+  questions:[
+    {
+      prompt:'気体の内部エネルギー E(S, V) の全微分は<br>dE = <span class="blank-marker">（ア）</span><br>である。',
+      blanks:[
+        { label:'ア', correct:'T dS − p dV', distractors:['−S dT − p dV','S dT + V dp','T dS + p dV'] }
+      ],
+      explanation:'<div class="ans-line">正解：dE = T dS − p dV</div>これは熱力学の基本関係式（dE=δQ−δW を準静的過程に対して δQ=TdS，δW=pdV と書き直したもの）です。丸暗記ではなく，S と V を独立変数とみたときの内部エネルギーの自然な微分だと理解しましょう。'
+    },
+    {
+      prompt:'ヘルムホルツ自由エネルギーは F = E − TS で定義される。両辺を微分すると<br>dF = dE − T dS − <span class="blank-marker">（イ）</span> dT<br>となる（積の微分 d(TS) = TdS + SdT を使う）。',
+      blanks:[
+        { label:'イ', correct:'S', distractors:['T','E','−S'] }
+      ],
+      explanation:'<div class="ans-line">正解：S</div>d(TS) は積の微分公式より T dS + S dT なので，F = E − TS の微分は dF = dE − (T dS + S dT) = dE − T dS − S dT となります。'
+    },
+    {
+      prompt:'ここに dE = T dS − p dV を代入すると<br>dF = (T dS − p dV) − T dS − S dT<br>となり，T dS の項が打ち消し合って<br>dF = <span class="blank-marker">（ウ）</span><br>が得られる。',
+      blanks:[
+        { label:'ウ', correct:'−S dT − p dV', distractors:['T dS − p dV','−S dT + p dV','S dT − p dV'] }
+      ],
+      explanation:'<div class="ans-line">正解：dF = −S dT − p dV</div>これが F(T,V) の基本関係式です。E(S,V) では S,V が自然な独立変数だったのに対し，F(T,V) では T,V が自然な独立変数になっていることに注目しましょう（ルジャンドル変換）。'
+    }
+  ]
+},
+{
+  id:'t6',
+  title:'⑥ クラウジウスの不等式',
+  intro:'最後は「サイクルを1周すると ∮δQ/T ≤ 0」というクラウジウスの不等式です。系のエントロピー・熱源のエントロピー・全体のエントロピーを順番に追いかける計算過程を，そのままステップごとの穴埋めにしました。',
+  questions:[
+    {
+      prompt:'系がサイクル過程を行うとき，1周後に系は元の状態にちょうど戻る。したがって系自身のエントロピー変化は<br>ΔS<sub>sys</sub> = <span class="blank-marker">（ア）</span><br>である。',
+      blanks:[
+        { label:'ア', correct:'0', distractors:['正の値','負の値','不定（符号は分からない）'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔS<sub>sys</sub> = 0</div>エントロピーは状態量なので，1周して元の状態に戻れば，その変化は必ずゼロです。これは可逆・不可逆に関係なく成り立ちます。'
+    },
+    {
+      prompt:'系が温度 T の熱源から微小な熱 δQ を吸収すると，熱源は同じ δQ を失う。よって熱源の微小エントロピー変化は<br>dS<sub>res</sub> = <span class="blank-marker">（イ）</span><br>である。',
+      blanks:[
+        { label:'イ', correct:'−δQ / T', distractors:['δQ / T','−δQ','δQ × T'] }
+      ],
+      explanation:'<div class="ans-line">正解：dS<sub>res</sub> = −δQ/T</div>熱源自身は準静的に（十分ゆっくり）熱をやり取りしていると考えてよいので，dS=δQ/T が使えます。ただし熱源は熱を「失う」ので符号がマイナスになります。'
+    },
+    {
+      prompt:'これをサイクル1周分積分すると，熱源全体のエントロピー変化は<br>ΔS<sub>res</sub> = <span class="blank-marker">（ウ）</span><br>となる。',
+      blanks:[
+        { label:'ウ', correct:'−∮ δQ / T', distractors:['∮ δQ / T','−∮ δQ','0'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔS<sub>res</sub> = −∮δQ/T</div>各瞬間の dS<sub>res</sub> = −δQ/T を1周にわたって積分（∮）するだけです。'
+    },
+    {
+      prompt:'系と熱源を合わせた全体を孤立系とみなすと，熱力学第二法則より，全エントロピー変化について<br><span class="blank-marker">（エ）</span><br>が成り立たなければならない。',
+      blanks:[
+        { label:'エ', correct:'ΔS<sub>tot</sub> ≥ 0', distractors:['ΔS<sub>tot</sub> ≤ 0','ΔS<sub>tot</sub> = 0','ΔS<sub>tot</sub> > 0 でなければならない'] }
+      ],
+      explanation:'<div class="ans-line">正解：ΔS<sub>tot</sub> ≥ 0</div>孤立系のエントロピーは自発的な変化で減少しません（等号は可逆過程）。これは第二法則そのものです。'
+    },
+    {
+      prompt:'サイクル過程では ΔS<sub>sys</sub> = 0 なので，ΔS<sub>tot</sub> = ΔS<sub>res</sub> = −∮δQ/T ≥ 0 が成り立つ。両辺を整理すると，最終的に<br><span class="blank-marker">（オ）</span><br>というクラウジウスの不等式が得られる。',
+      blanks:[
+        { label:'オ', correct:'∮ δQ / T ≤ 0', distractors:['∮ δQ / T ≥ 0','∮ δQ / T = 0','∮ δQ / T は正負両方取り得る'] }
+      ],
+      explanation:'<div class="ans-line">正解：∮ δQ/T ≤ 0</div>−∮δQ/T ≥ 0 の両辺に −1 をかけて不等号の向きを反転させると ∮δQ/T ≤ 0 になります。等号が成り立つのは可逆サイクルのときです。'
+    }
+  ]
+}
+];
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildOptions(blank){
+  const optsDiv = document.createElement('div');
+  optsDiv.className = 'options';
+  const opts = shuffle([
+    {text: blank.correct, correct:true},
+    ...blank.distractors.map(d=>({text:d, correct:false}))
+  ]);
+  opts.forEach(opt=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'opt-btn';
+    btn.innerHTML = opt.text;
+    btn.dataset.correct = opt.correct ? '1':'0';
+    btn.addEventListener('click', ()=>{
+      if(optsDiv.dataset.locked === '1') return;
+      optsDiv.dataset.locked = '1';
+      const all = optsDiv.querySelectorAll('.opt-btn');
+      all.forEach(b=>b.classList.add('disabled'));
+      if(opt.correct){
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('incorrect');
+        all.forEach(b=>{ if(b.dataset.correct==='1') b.classList.add('correct'); });
+      }
+    });
+    optsDiv.appendChild(btn);
+  });
+  return optsDiv;
+}
+
+function renderQuestion(q, idx){
+  const qDiv = document.createElement('div');
+  qDiv.className = 'question';
+
+  const promptDiv = document.createElement('div');
+  promptDiv.className = 'q-prompt';
+  promptDiv.innerHTML = '<span class="q-tag">Q'+(idx+1)+'</span>' + q.prompt;
+  qDiv.appendChild(promptDiv);
+
+  const blanksWrap = document.createElement('div');
+  blanksWrap.className = 'blanks-wrap';
+  q.blanks.forEach(blank=>{
+    const bDiv = document.createElement('div');
+    bDiv.className = 'blank-block';
+    const label = document.createElement('div');
+    label.className = 'blank-label';
+    label.innerHTML = '<span class="amber">（'+blank.label+'）</span> の選択肢';
+    bDiv.appendChild(label);
+    bDiv.appendChild(buildOptions(blank));
+    blanksWrap.appendChild(bDiv);
+  });
+  qDiv.appendChild(blanksWrap);
+
+  const footer = document.createElement('div');
+  footer.className = 'q-footer';
+  const ansBtn = document.createElement('button');
+  ansBtn.type='button';
+  ansBtn.className = 'answer-btn';
+  ansBtn.textContent = '答えを見る';
+  const feedback = document.createElement('span');
+  feedback.className = 'feedback-msg';
+  feedback.textContent = 'まずは選んでみよう';
+  footer.appendChild(ansBtn);
+  footer.appendChild(feedback);
+  qDiv.appendChild(footer);
+
+  const explDiv = document.createElement('div');
+  explDiv.className = 'explanation hidden';
+  explDiv.innerHTML = q.explanation;
+  qDiv.appendChild(explDiv);
+
+  ansBtn.addEventListener('click', ()=>{
+    const showing = !explDiv.classList.contains('hidden');
+    if(showing){
+      explDiv.classList.add('hidden');
+      ansBtn.textContent = '答えを見る';
+    } else {
+      explDiv.classList.remove('hidden');
+      ansBtn.textContent = '答えを隠す';
+      qDiv.querySelectorAll('.options').forEach(optsDiv=>{
+        optsDiv.dataset.locked = '1';
+        optsDiv.querySelectorAll('.opt-btn').forEach(b=>{
+          b.classList.add('disabled');
+          if(b.dataset.correct === '1') b.classList.add('correct');
+        });
+      });
+      feedback.textContent = '';
+    }
+  });
+
+  return qDiv;
+}
+
+function buildTabNav(){
+  const nav = document.getElementById('tabNav');
+  TABS.forEach((tab, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i===0 ? ' active':'');
+    btn.textContent = tab.title;
+    btn.addEventListener('click', ()=> activateTab(tab.id));
+    btn.dataset.tabid = tab.id;
+    nav.appendChild(btn);
+  });
+}
+
+function activateTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.tabid===id));
+  document.querySelectorAll('.tab-panel').forEach(p=> p.classList.toggle('active', p.id===id));
+}
+
+function buildTabPanels(){
+  const main = document.getElementById('mainArea');
+  TABS.forEach((tab, i)=>{
+    const panel = document.createElement('section');
+    panel.className = 'tab-panel' + (i===0 ? ' active':'');
+    panel.id = tab.id;
+
+    const intro = document.createElement('div');
+    intro.className = 'tab-intro';
+    intro.innerHTML = tab.intro;
+    panel.appendChild(intro);
+
+    const qLabel = document.createElement('div');
+    qLabel.className = 'section-label';
+    qLabel.textContent = '穴埋めクイズ';
+    panel.appendChild(qLabel);
+
+    tab.questions.forEach((q, qi)=> panel.appendChild(renderQuestion(q, qi)));
+
+    const lLabel = document.createElement('div');
+    lLabel.className = 'section-label';
+    lLabel.textContent = 'ステップバイステップ解説';
+    panel.appendChild(lLabel);
+
+    const lessonSlot = document.createElement('div');
+    lessonSlot.id = tab.id + '-lesson';
+    panel.appendChild(lessonSlot);
+
+    main.appendChild(panel);
+  });
+}
+
+buildTabNav();
+buildTabPanels();
+</script>
+
+<!-- ============================================================
+     LESSON CONTENT (static HTML, injected into each tab's lesson slot)
+     ============================================================ -->
+<template id="lesson-t1">
+  <div class="lesson">
+    <h3>熱力学第一法則を「エネルギーの家計簿」として理解する</h3>
+    <p class="dim">系のエネルギーは、勝手に増えたり減ったりしません。増減があるとすれば、必ず「熱の出入り」か「仕事のやり取り」のどちらかが原因です。第一法則は、この2つの収入源をそのまま足し合わせるだけの、とてもシンプルな会計ルールです。</p>
+
+    <h4><span class="num">1</span>符号の約束を先に決める</h4>
+    <p>この問題では次のように約束しています。</p>
+    <ul>
+      <li><b>Q</b>：系が<b>吸収</b>する熱（系に入ってくる熱を正とする）</li>
+      <li><b>W</b>：系が外部から<b>された</b>仕事（系に加えられる仕事を正とする）</li>
+    </ul>
+    <p>どちらも「系に入ってくる方向」を正にとっているのがポイントです。こうしておくと、内部エネルギーの変化は単純な足し算になります。</p>
+
+    <h4><span class="num">2</span>第一法則の式を立てる</h4>
+    <div class="formula-block">
+      <div class="caption">熱力学第一法則</div>
+      \[ \Delta E = Q + W \]
+    </div>
+    <p>系が熱をもらう（Q&gt;0）か，仕事をされる（W&gt;0）と，内部エネルギーは増えます。逆に熱を放出する（Q&lt;0）か，仕事をする（W&lt;0）と内部エネルギーは減ります。これはニュートン力学における運動エネルギーの増減が「されられた仕事」で決まるのと同じ発想です。</p>
+
+    <div class="point-box">
+      <div class="head">💡 ポイント</div>
+      教科書によっては「系がした仕事」を W と置いて ΔE = Q − W と書く流儀もあります。式の形が違っても物理的中身は同じなので、まず自分が使っている W がどちら向きの仕事かを確認する習慣をつけましょう。
+    </div>
+
+    <h4><span class="num">3</span>符号の入れ替えに強くなる</h4>
+    <p>系が外部にした仕事を W′ とすると、これは「された仕事」のちょうど逆符号になります。</p>
+    <div class="formula-block">
+      <div class="caption">符号の変換</div>
+      \[ W = -W' \]
+    </div>
+    <p>したがって ΔE = Q + W = Q − W′ とも書けます。テストで急に「した仕事」表記に切り替わっても慌てないよう、この変換を体に覚え込ませておくと安心です。</p>
+
+    <div class="key-points">
+      <div class="head">✅ キーポイントまとめ</div>
+      <ul>
+        <li><b>ΔE = Q + W</b>：吸収した熱とされた仕事は、そのまま足すだけで内部エネルギーの変化になる。</li>
+        <li>符号の約束（何を正にとっているか）を最初に必ず確認する。</li>
+        <li>「された仕事」と「した仕事」は符号が逆（W = −W′）。</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template id="lesson-t2">
+  <div class="lesson">
+    <h3>等温準静的過程：仕事＝自由エネルギー、熱÷温度＝エントロピー</h3>
+    <p class="dim">「準静的」とは、系が常に熱平衡に近い状態を保ちながら、無限にゆっくり進む理想的な過程のことです。この理想化のおかげで、仕事とエントロピーが状態量（自由エネルギーとエントロピー）の変化そのものと一致するという、とても綺麗な関係が成り立ちます。</p>
+
+    <h4><span class="num">1</span>自由エネルギーの変化＝された仕事</h4>
+    <div class="formula-block">
+      <div class="caption">等温準静的過程での仕事</div>
+      \[ \Delta F = W \]
+    </div>
+    <p>ヘルムホルツ自由エネルギー F は、「一定温度のもとで、系から取り出せる最大の仕事（の符号を変えたもの）」という意味を持つ量です。準静的過程では散逸（むだなロス）が一切ないため、された仕事がそのまま F の変化にぴったり一致します。</p>
+
+    <h4><span class="num">2</span>エントロピーの変化＝吸収熱／温度</h4>
+    <div class="formula-block">
+      <div class="caption">等温準静的過程での熱</div>
+      \[ \Delta S = \frac{Q}{T} \]
+    </div>
+    <p>これはエントロピーの定義そのものです。準静的過程では、微小な熱のやり取り \(\delta Q\) に対して常に \(dS=\delta Q/T\) が成り立ち、これを積分すると \(\Delta S = Q/T\) になります（温度 T が一定だから積分が簡単になる点に注意）。</p>
+
+    <div class="point-box">
+      <div class="head">💡 ポイント</div>
+      ΔF=W も ΔS=Q/T も、独立な2つの経験則ではありません。次のステップで見るように、第一法則 ΔE=Q+W と定義 F=E−TS を組み合わせるだけで、両方が矛盾なくつながっていることが確認できます。
+    </div>
+
+    <h4><span class="num">3</span>2つの式のつながりを計算で確かめる</h4>
+    <p>自由エネルギーの定義 F=E−TS から、ΔF=ΔE−TΔS です。ここに第一法則 ΔE=Q+W と、上で求めた ΔS=Q/T を代入してみましょう。</p>
+    <div class="formula-block">
+      <div class="caption">代入と整理</div>
+      \[ \Delta F = \Delta E - T\Delta S = (Q+W) - T\cdot\frac{Q}{T} = (Q+W) - Q = W \]
+    </div>
+    <p>T と 1/T が打ち消し合って Q が消え、最終的に ΔF=W という最初の結果にきちんと戻ってきます。これは「等温準静的過程」という設定のもとでは、第一法則・自由エネルギーの定義・エントロピーの定義がすべて矛盾なく整合していることを示す、良い検算になっています。</p>
+
+    <div class="key-points">
+      <div class="head">✅ キーポイントまとめ</div>
+      <ul>
+        <li>等温準静的過程では <b>ΔF = W</b>（された仕事＝自由エネルギー変化）。</li>
+        <li>同じ過程で <b>ΔS = Q/T</b>（吸収熱÷温度＝エントロピー変化）。</li>
+        <li>この2つは F=E−TS と第一法則 ΔE=Q+W から導かれる、互いに矛盾しない関係。</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template id="lesson-t3">
+  <div class="lesson">
+    <h3>「孤立系のエントロピーは減らない」の2つの現れ方</h3>
+    <p class="dim">熱力学第二法則の最も原始的な形は「孤立系全体のエントロピーは自発変化で減らない」というものです。断熱過程と、定温・定積・仕事なしの過程は、一見まったく違う設定に見えますが、どちらもこの同じ第二法則の言い換えにすぎません。</p>
+
+    <h4><span class="num">1</span>断熱過程：エントロピーで判定する</h4>
+    <p>断熱過程では系と外部の間で熱のやり取りがゼロなので（δQ=0）、系自体を「孤立系」とみなせます。準静的な断熱過程なら可逆的でエントロピー一定（ΔS=0）ですが、現実の断熱過程には摩擦や急激な体積変化などの不可逆性が伴うことが多く、その場合エントロピーは増加します。</p>
+    <div class="formula-block">
+      <div class="caption">断熱過程で到達可能な状態</div>
+      \[ \Delta S \ge 0 \]
+    </div>
+
+    <h4><span class="num">2</span>定温・定積・仕事なし：自由エネルギーで判定する</h4>
+    <p>今度は系が熱浴（温度T）と接触していて、熱の出入りは自由にできますが、体積は変えず、外から仕事も加えません。この場合、系だけを見てもエントロピーは増えるとは限りません（熱を放出すれば系のエントロピーは減ることもあります）。そこで、系と熱浴を合わせた全体を1つの孤立系とみなして考える必要があります。</p>
+    <div class="formula-block">
+      <div class="caption">孤立系（系＋熱浴）のエントロピー</div>
+      \[ \Delta S_{\text{tot}} = \Delta S_{\text{sys}} + \Delta S_{\text{res}} \ge 0 \]
+    </div>
+    <p>熱浴が吸収する熱 \(-\delta Q\) から \(\Delta S_{\text{res}} = -Q/T\) が出てくるので、これを代入して整理すると、</p>
+    <div class="formula-block">
+      <div class="caption">自由エネルギーに書き直す</div>
+      \[ \Delta S_{\text{sys}} - \frac{Q}{T} \ge 0 \ \Longrightarrow\ T\Delta S_{\text{sys}} \ge Q = \Delta E_{\text{sys}}\ \Longrightarrow\ \Delta F_{\text{sys}} = \Delta E_{\text{sys}} - T\Delta S_{\text{sys}} \le 0 \]
+    </div>
+    <p>（体積一定・仕事なしなので \(Q=\Delta E_{\text{sys}}\) を使いました。）こうして「定温・定積・仕事なしの自発変化では ΔF ≤ 0」という結果が、根っこの第二法則からきちんと導かれます。</p>
+
+    <div class="warn-box">
+      <div class="head">⚠️ 注意</div>
+      「エントロピーが増える方向に進む」というのは、あくまで<b>孤立系全体</b>についての法則です。系だけを取り出すと、エントロピーが減ることも自由エネルギーが増えることもあり得ます。どの範囲を「孤立系」とみなしているかを、常に意識しましょう。
+    </div>
+
+    <div class="key-points">
+      <div class="head">✅ キーポイントまとめ</div>
+      <ul>
+        <li>断熱過程（系自身が孤立系）で到達可能な終状態は <b>ΔS ≥ 0</b>。</li>
+        <li>定温・定積・仕事なしの自発変化（系＋熱浴が孤立系）で到達可能な終状態は <b>ΔF ≤ 0</b>。</li>
+        <li>どちらも出発点は同じ「孤立系全体のエントロピーは減らない（ΔS<sub>tot</sub> ≥ 0）」という第二法則。</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template id="lesson-t4">
+  <div class="lesson">
+    <h3>同じゴールでも、道のりによって仕事と熱は変わる</h3>
+    <p class="dim">力学のポテンシャルエネルギーと違って、熱力学の「仕事」と「熱」は経路によって値が変わる量（経路関数）です。ただし、その変わり方には W ≥ ΔF という決まった不等式があり、この不等式1本から、最小になる場合・最大になる場合がどちらも読み取れます。</p>
+
+    <h4><span class="num">1</span>不等式 W ≥ ΔF はどこから来るのか</h4>
+    <p>系と熱浴を合わせた孤立系の第二法則 \(\Delta S_{\text{tot}}\ge 0\) を、定温の等温過程に適用すると（③のタブで見たのと同様の計算により）、次の不等式が得られます。</p>
+    <div class="formula-block">
+      <div class="caption">等温過程の一般不等式</div>
+      \[ W \ge \Delta F \]
+    </div>
+    <p>W は経路によって変わりますが、ΔF は始状態と終状態だけで決まる状態量です。つまりこの不等式は「経路によらない一定の下限 ΔF を、実際の仕事 W はいつも上回る（またはちょうど等しい）」と読めます。</p>
+
+    <h4><span class="num">2</span>等号が成り立つのは準静的過程のときだけ</h4>
+    <p>不可逆性（急激な圧縮、摩擦、乱流など）が過程に含まれるほど、余分なエネルギーの散逸が生じ、必要な仕事は増えていきます。不可逆性をゼロに近づけた極限が準静的過程であり、そのときに等号 W=ΔF が成立します。</p>
+    <div class="point-box">
+      <div class="head">💡 ポイント</div>
+      「不等式の等号が成り立つのは準静的（＝可逆）過程のとき」というパターンは、クラウジウスの不等式（⑥のタブ）でも同じ形で登場します。熱力学の不等式はほとんどこの型だと覚えておくと見通しが良くなります。
+    </div>
+
+    <h4><span class="num">3</span>仕事が最小なら、熱は最大になる</h4>
+    <p>始状態と終状態が同じなら、内部エネルギーの変化 ΔE は経路によらず一定です。第一法則を Q について解くと、</p>
+    <div class="formula-block">
+      <div class="caption">熱を仕事から逆算する</div>
+      \[ Q = \Delta E - W \]
+    </div>
+    <p>ΔE が一定の値に固定されている中で、W が最小（＝等温準静的過程）になれば、引き算されるぶんが最も少なくなるので、残りの Q は逆に最大になります。イメージとしては、「ゆっくり丁寧に行うほど、外から仕事を借りずに済み、そのぶん熱として多く受け取れる」という感覚です。</p>
+
+    <div class="key-points">
+      <div class="head">✅ キーポイントまとめ</div>
+      <ul>
+        <li>同じ始状態・終状態を結ぶ等温過程では、常に <b>W ≥ ΔF</b>。</li>
+        <li>等号（W=ΔFかつWが最小）が成り立つのは<b>等温準静的過程</b>のとき。</li>
+        <li>ΔE 一定のもとで W が最小になれば、Q = ΔE − W は<b>最大</b>になる。</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template id="lesson-t5">
+  <div class="lesson">
+    <h3>dE=TdS−pdVから始まる「熱力学ポテンシャルの家系図」</h3>
+    <p class="dim">熱力学関数（E, F, G, H など）はすべて、内部エネルギー E(S,V) の基本関係式 dE=TdS−pdV を出発点にして、変数を取り替える「ルジャンドル変換」によって作られます。ここでは、その一番シンプルな例として E から F を作る計算を、1ステップずつ確認します。</p>
+
+    <h4><span class="num">1</span>出発点：内部エネルギーの基本関係式</h4>
+    <div class="formula-block">
+      <div class="caption">内部エネルギー E(S,V) の全微分</div>
+      \[ dE = T\,dS - p\,dV \]
+    </div>
+    <p>これは第一法則 \(dE=\delta Q - \delta W\) を、準静的過程における \(\delta Q = TdS\)，\(\delta W = pdV\) で書き直したものです。E の自然な独立変数は S と V であることが、この式の形（dSの係数がT、dVの係数が−p）から読み取れます。</p>
+
+    <h4><span class="num">2</span>目的：独立変数を S から T に取り替えたい</h4>
+    <p>実験ではエントロピー S より温度 T の方がずっと扱いやすい変数です。そこで「S の代わりに T を自然な変数として持つ関数」を作りたい、というのがヘルムホルツ自由エネルギー F=E−TS を導入する動機です。</p>
+
+    <h4><span class="num">3</span>F=E−TSを微分する（積の微分に注意）</h4>
+    <div class="formula-block">
+      <div class="caption">定義式の微分</div>
+      \[ dF = dE - d(TS) = dE - (T\,dS + S\,dT) = dE - T\,dS - S\,dT \]
+    </div>
+    <p>ここで d(TS) は「積の微分」なので \(T\,dS + S\,dT\) の2項に分かれる点に注意してください。うっかり \(T\,dS\) だけにしてしまうミスがよくあるので、積の微分公式 \(d(uv)=u\,dv+v\,du\) を必ず思い出しましょう。</p>
+
+    <h4><span class="num">4</span>dEを代入して整理する</h4>
+    <div class="formula-block">
+      <div class="caption">代入と項の打ち消し</div>
+      \[ dF = \underbrace{(T\,dS - p\,dV)}_{dE} - T\,dS - S\,dT = -S\,dT - p\,dV \]
+    </div>
+    <p>\(T\,dS\) の項が正負で打ち消し合い、きれいに消えるのがポイントです。残るのは \(dT\) と \(dV\) の項だけなので、F の自然な独立変数が T と V に変わったことが、この式の形から確認できます。</p>
+
+    <div class="point-box">
+      <div class="head">💡 ポイント</div>
+      \(dE=TdS-pdV\) の係数を見ると \(\left(\frac{\partial E}{\partial S}\right)_V=T\)，\(\left(\frac{\partial E}{\partial V}\right)_S=-p\) が読み取れます。同様に \(dF=-SdT-pdV\) からは \(\left(\frac{\partial F}{\partial T}\right)_V=-S\)，\(\left(\frac{\partial F}{\partial V}\right)_T=-p\) が読み取れます。全微分の式は、そのまま偏微分の公式集になっています。
+    </div>
+
+    <div class="key-points">
+      <div class="head">✅ キーポイントまとめ</div>
+      <ul>
+        <li>内部エネルギーの基本関係式：<b>dE = T dS − p dV</b>（自然な変数は S, V）。</li>
+        <li>F=E−TS を微分するときは、積の微分で d(TS)=TdS+SdTとなることを忘れない。</li>
+        <li>dE を代入すると TdS が打ち消し合い、<b>dF = −S dT − p dV</b>（自然な変数は T, V）が得られる。</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template id="lesson-t6">
+  <div class="lesson">
+    <h3>クラウジウスの不等式：サイクルを1周した後の帳尻合わせ</h3>
+    <p class="dim">エンジン（サイクル）は、1周すると必ず元の状態に戻ります。「戻ってくる」という当たり前の事実と、「孤立系全体のエントロピーは減らない」という第二法則を組み合わせるだけで、\(\oint \delta Q/T \le 0\) という有名な不等式が導けます。難しそうに見えますが、実は積み木を1段ずつ積むような素直な計算です。</p>
+
+    <h4><span class="num">1</span>系はサイクルするので ΔS<sub>sys</sub>=0</h4>
+    <p>エントロピーは状態量なので、始状態と終状態が同じ（＝1周して戻ってくる）なら、その変化は必ずゼロです。</p>
+    <div class="formula-block">
+      <div class="caption">系のエントロピー変化</div>
+      \[ \Delta S_{\text{sys}} = \oint dS_{\text{sys}} = 0 \]
+    </div>
+
+    <h4><span class="num">2</span>熱源1つ1つのエントロピー変化を書く</h4>
+    <p>系が温度 T の熱源から微小熱 δQ を受け取ると、その熱源はちょうど δQ を失います。熱源自身は十分大きく、常に平衡にあるとみなせるので、そのエントロピー変化は次のように書けます。</p>
+    <div class="formula-block">
+      <div class="caption">熱源の微小エントロピー変化</div>
+      \[ dS_{\text{res}} = \frac{-\delta Q}{T} \]
+    </div>
+    <p>マイナス符号がつくのは「系にとっての δQ（受け取る熱）」を、熱源側から見ると「失う熱」になるからです。</p>
+
+    <h4><span class="num">3</span>サイクル全体で積分する</h4>
+    <div class="formula-block">
+      <div class="caption">熱源全体のエントロピー変化</div>
+      \[ \Delta S_{\text{res}} = -\oint \frac{\delta Q}{T} \]
+    </div>
+    <p>サイクルの間、熱源の温度 T は必ずしも一定ではない（複数の熱源を渡り歩くこともある）ため、和や積分の中に T を残したまま書くのが正確な表現です。</p>
+
+    <h4><span class="num">4</span>孤立系（系＋熱源）に第二法則を適用する</h4>
+    <p>系と熱源をすべて合わせた全体は、外部と何もやり取りしない孤立系とみなせます。孤立系のエントロピーは自発変化で減らないので、</p>
+    <div class="formula-block">
+      <div class="caption">全体のエントロピー変化</div>
+      \[ \Delta S_{\text{tot}} = \Delta S_{\text{sys}} + \Delta S_{\text{res}} \ge 0 \]
+    </div>
+
+    <h4><span class="num">5</span>ΔS<sub>sys</sub>=0を代入して結論を出す</h4>
+    <p>ステップ1の結果 \(\Delta S_{\text{sys}}=0\) をここに代入すると、</p>
+    <div class="formula-block">
+      <div class="caption">最終的な不等式</div>
+      \[ \Delta S_{\text{tot}} = \Delta S_{\text{res}} = -\oint \frac{\delta Q}{T} \ge 0 \]
+      \[ \Longrightarrow\quad \oint \frac{\delta Q}{T} \le 0 \]
+    </div>
+    <p>両辺に −1 をかけると不等号の向きが反転することに注意してください。これがクラウジウスの不等式です。等号が成り立つのは、すべての過程が可逆（準静的）なサイクルのときに限られます。</p>
+
+    <div class="warn-box">
+      <div class="head">⚠️ よくある勘違い</div>
+      \(\oint \delta Q/T\) は「系のエントロピー変化」そのものではありません。系のエントロピー変化は常に0（サイクルだから）ですが、\(\oint \delta Q/T\) は熱源側の情報を反映した量であり、一般には0にならず、0以下になるだけです。両者を混同しないようにしましょう。
+    </div>
+
+    <div class="key-points">
+      <div class="head">✅ キーポイントまとめ</div>
+      <ul>
+        <li>サイクル過程では系自身のエントロピー変化は必ず <b>ΔS<sub>sys</sub> = 0</b>。</li>
+        <li>熱源のエントロピー変化は <b>dS<sub>res</sub> = −δQ/T</b>。積分すると <b>ΔS<sub>res</sub> = −∮δQ/T</b>。</li>
+        <li>孤立系の第二法則 ΔS<sub>tot</sub> ≥ 0 に代入すると、クラウジウスの不等式 <b>∮δQ/T ≤ 0</b> が得られる。</li>
+        <li>等号は可逆サイクルのときのみ成立する。</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+  // Inject lesson templates into their slots
+  TABS.forEach(tab=>{
+    const tpl = document.getElementById('lesson-'+tab.id);
+    const slot = document.getElementById(tab.id+'-lesson');
+    if(tpl && slot){
+      slot.appendChild(tpl.content.cloneNode(true));
+    }
+  });
+
+  // Typeset math after everything is in the DOM
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise();
+  } else {
+    document.addEventListener('DOMContentLoaded', ()=>{
+      window.addEventListener('load', ()=>{
+        if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
